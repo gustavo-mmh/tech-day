@@ -3,7 +3,6 @@ package com.techday.techdaycarrefour.service;
 import java.util.List;
 
 import com.techday.techdaycarrefour.dto.UserDTO;
-import com.techday.techdaycarrefour.entities.User;
 import com.techday.techdaycarrefour.form.UserForm;
 
 public interface IUserService {
@@ -14,7 +13,7 @@ public interface IUserService {
 	 *             banco de dados.
 	 * @return - UserDTO recém-criado.
 	 */
-	User create(UserForm form);
+	UserDTO create(UserForm form);
 
 	/**
 	 * Retorna um UserDTO que está no banco de dados de acordo com seu login.
@@ -29,7 +28,7 @@ public interface IUserService {
 	 * 
 	 * @return - Uma lista os UserDTOs que estão salvas no DB.
 	 */
-	List<UserDTO> getAll();
+	List<UserDTO> getAll(String cep);
 
 	/**
 	 * Atualiza o UserDTO.
@@ -39,7 +38,7 @@ public interface IUserService {
 	 *                   atualização do UserDTO no banco de dados.
 	 * @return - UserDTO recém-atualizado.
 	 */
-	User update(Long id, UserForm formUpdate);
+	UserDTO update(Long id, UserForm formUpdate);
 
 	/**
 	 * Deleta um UserDTO específico.
@@ -48,6 +47,6 @@ public interface IUserService {
 	 */
 	void delete(Long id);
 
-	List<UserDTO> getAll(String cep);
+	
 
 }

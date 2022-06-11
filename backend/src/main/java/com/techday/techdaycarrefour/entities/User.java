@@ -1,5 +1,6 @@
 package com.techday.techdaycarrefour.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,9 +22,9 @@ public class User {
 	private Long id;
 	private String nome;
 	private String email;
+	@Column(unique = true)
 	private String login;
 	private String password;
 	private String cep;
-
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +22,20 @@ public class UserServiceImpl implements IUserService {
 	private UserRepository repository;
 
 	@Override
-	public User create(UserForm form) {
-		User user = new User();
+	public UserDTO create(UserForm form) {
+		User user = repository.findByLogin(form.getLogin());
+		if (user != null) {
+			throw new ServiceException("Login já existe");
+		}
+		User obj = new User();
 
-		user.setNome(form.getNome());
-		user.setEmail(form.getEmail());
-		user.setLogin(form.getLogin());
-		user.setPassword(form.getPassword());
-		user.setCep(form.getCep());
-
-		return repository.save(user);
+		obj.setNome(form.getNome());
+		obj.setEmail(form.getEmail());
+		obj.setLogin(form.getLogin());
+		obj.setPassword(form.getPassword());
+		obj.setCep(form.getCep());
+		obj = repository.save(obj);
+		return new UserDTO(obj);
 	}
 
 	@Transactional(readOnly = true)
@@ -41,39 +46,26 @@ public class UserServiceImpl implements IUserService {
 		return dto;
 	}
 
-//	@Override
-//	public UserDTO get(String login) {
-//
-//		List<User> userEntity = repository.findByLogin(login);
-//
-//		if (userEntity == null) {
-//			throw new UsernameNotFoundException(login);
-//		}
-//		UserDTO returnValue = new UserDTO();
-//		BeanUtils.copyProperties(userEntity, returnValue);
-//
-//		return returnValue;
-//
-//	}
-
 	@Transactional
 	@Override
-	public User update(Long id, UserForm formUpdate) {
+	public UserDTO update(Long id, UserForm formUpdate) {
 		Optional<User> userData = repository.findById(id);
 		if (userData != null) {
-			User user = userData.get();
-			user.setNome(formUpdate.getNome());
-			user.setEmail(formUpdate.getEmail());
-			user.setLogin(formUpdate.getLogin());
-			user.setPassword(formUpdate.getPassword());
-			user.setCep(formUpdate.getCep());
-			return repository.save(user);
+			User obj = userData.get();
+			obj.setNome(formUpdate.getNome());
+			obj.setEmail(formUpdate.getEmail());
+			obj.setLogin(formUpdate.getLogin());
+			obj.setPassword(formUpdate.getPassword());
+			obj.setCep(formUpdate.getCep());
+			obj = repository.save(obj);
+			return new UserDTO(obj);
 		} else {
-			return null;
+			throw new ServiceException("Usuário não existe!");
 		}
 
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<UserDTO> getAll(String cep) {
 		if (cep == null) {
@@ -86,15 +78,13 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public List<UserDTO> getAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void delete(Long id) {
-		// TODO Auto-generated method stub
-
+		Optional<User> userData = repository.findById(id);
+		if (userData != null) {
+		repository.deleteById(id);
+		} else {
+			throw new ServiceException("Usuário não existe!");
+		}
 	}
 
 }

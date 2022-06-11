@@ -1,10 +1,10 @@
 package com.techday.techdaycarrefour.controller;
 
+import java.net.URI;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.techday.techdaycarrefour.dto.UserDTO;
-import com.techday.techdaycarrefour.entities.User;
 import com.techday.techdaycarrefour.form.UserForm;
+import com.techday.techdaycarrefour.service.exception.ServiceException;
 import com.techday.techdaycarrefour.service.impl.UserServiceImpl;
 
 @RestController
@@ -27,8 +28,16 @@ public class UserController {
 	private UserServiceImpl service;
 
 	@PostMapping
-	public User create(@Valid @RequestBody UserForm form) {
-		return service.create(form);
+	public ResponseEntity<UserDTO> create(@RequestBody UserForm form) {
+		try {
+			UserDTO obj = service.create(form);
+			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+					.buildAndExpand(obj.getId()).toUri();
+			return ResponseEntity.created(uri).body(obj);	
+		}catch (ServiceException e) {
+			return ResponseEntity.unprocessableEntity().build();
+		}
+		
 	}
 
 	@GetMapping("/{id}")
@@ -40,17 +49,15 @@ public class UserController {
 	    return service.getAll(cep);
 	  }
 	
-	@PutMapping("/users/{id}")
-	  public User update(@PathVariable("id") Long id, @RequestBody UserForm formUpdate) {
-		
+	@PutMapping("/{id}")
+	  public UserDTO update(@PathVariable Long id, @RequestBody UserForm formUpdate) {
 		return service.update(id, formUpdate);
 		 
 		
 	}
 	@DeleteMapping("/{id}")
-	public User delete(@PathVariable Long id) {
-	    User returnValue = new User();
+	public UserDTO delete(@PathVariable Long id) {
 	    service.delete(id);
-	    return  returnValue;
+		return null;
 	}
 }

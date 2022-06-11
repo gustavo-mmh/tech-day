@@ -8,5 +8,7 @@ import com.techday.techdaycarrefour.entities.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> findByCep(String cep);
-//	List<User> findByLogin(String login);
+
+	User findByLogin(String login);
+
 }
