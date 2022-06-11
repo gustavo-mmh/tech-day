@@ -1,10 +1,10 @@
-package com.techday.paineldecontrole;
+package com.techday.techdaycarrefour;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PaineldecontroleApplicationTests {
+class TechdaycarrefourApplicationTests {
 
 	@Test
 	void contextLoads() {
