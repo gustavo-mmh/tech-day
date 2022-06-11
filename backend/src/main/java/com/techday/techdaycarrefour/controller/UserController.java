@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.techday.techdaycarrefour.dto.UserDTO;
 import com.techday.techdaycarrefour.entities.User;
 import com.techday.techdaycarrefour.form.UserForm;
-import com.techday.techdaycarrefour.form.UserUpdateForm;
 import com.techday.techdaycarrefour.service.impl.UserServiceImpl;
 
 @RestController
@@ -42,7 +41,7 @@ public class UserController {
 	  }
 	
 	@PutMapping("/users/{id}")
-	  public User update(@PathVariable("id") Long id, @RequestBody UserUpdateForm formUpdate) {
+	  public User update(@PathVariable("id") Long id, @RequestBody UserForm formUpdate) {
 		
 		return service.update(id, formUpdate);
 		 

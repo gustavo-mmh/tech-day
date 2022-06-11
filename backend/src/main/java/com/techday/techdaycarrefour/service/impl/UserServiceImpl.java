@@ -2,18 +2,15 @@ package com.techday.techdaycarrefour.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.aspectj.apache.bcel.classfile.Module.Uses;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.techday.techdaycarrefour.dto.UserDTO;
 import com.techday.techdaycarrefour.entities.User;
 import com.techday.techdaycarrefour.form.UserForm;
-import com.techday.techdaycarrefour.form.UserUpdateForm;
 import com.techday.techdaycarrefour.repositories.UserRepository;
 import com.techday.techdaycarrefour.service.IUserService;
 
@@ -61,7 +58,7 @@ public class UserServiceImpl implements IUserService {
 
 	@Transactional
 	@Override
-	public User update(Long id, UserUpdateForm formUpdate) {
+	public User update(Long id, UserForm formUpdate) {
 		Optional<User> userData = repository.findById(id);
 		if (userData != null) {
 			User user = userData.get();
@@ -77,10 +74,15 @@ public class UserServiceImpl implements IUserService {
 
 	}
 
-
 	@Override
 	public List<UserDTO> getAll(String cep) {
-		return getAll(cep);
+		if (cep == null) {
+			List<User> list = repository.findAll();
+			return list.stream().map(x -> new UserDTO(x)).collect(Collectors.toList());
+		} else {
+			List<User> listuserbycep = repository.findByCep(cep);
+			return listuserbycep.stream().map(x -> new UserDTO(x)).collect(Collectors.toList());
+		}
 	}
 
 	@Override
@@ -92,14 +94,7 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public void delete(Long id) {
 		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public UserDTO get(String login) {
-		// TODO Auto-generated method stub
-		return null;
 	}
-
 
 }
